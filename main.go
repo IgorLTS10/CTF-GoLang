@@ -50,9 +50,9 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 
 			responseBody, err := ioutil.ReadAll(respCheck.Body)
 			if err == nil {
-				fmt.Printf("Contenu de la réponse de /check : %s\n", string(responseBody))
+				fmt.Printf("Contenu de la réponse de /check : %s\n\n", string(responseBody))
 			} else {
-				fmt.Printf("Erreur lors de la lecture de la réponse de /check : %v\n", err)
+				fmt.Printf("Erreur lors de la lecture de la réponse de /check : %v\n\n", err)
 			}
 		}
 
@@ -81,9 +81,9 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			userLevel, err := ioutil.ReadAll(respUserLevel.Body)
 			if err == nil {
 				userLevelss = string(userLevel)
-				fmt.Printf("Niveau de l'utilisateur : %s\n", string(userLevel))
+				fmt.Printf("Niveau de l'utilisateur : %s\n\n", string(userLevel))
 			} else {
-				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserLevel : %v\n", err)
+				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserLevel : %v\n\n", err)
 			}
 		}
 
@@ -96,9 +96,9 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			userPoints, err := ioutil.ReadAll(respUserPoints.Body)
 			if err == nil {
 				userPointss = string(userPoints)
-				fmt.Printf("Points de l'utilisateur : %s\n", string(userPoints))
+				fmt.Printf("Points de l'utilisateur : %s\n\n", string(userPoints))
 			} else {
-				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserPoints : %v\n", err)
+				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserPoints : %v\n\n", err)
 			}
 		}
 
@@ -114,9 +114,9 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			// Lire la réponse en tant que chaîne de caractères
 			hint, err := ioutil.ReadAll(respHint.Body)
 			if err == nil {
-				fmt.Printf("Hint : %s\n", string(hint))
+				fmt.Printf("Hint : %s\n\n", string(hint))
 			} else {
-				fmt.Printf("Erreur lors de la lecture de la réponse de /iNeedAHint : %v\n", err)
+				fmt.Printf("Erreur lors de la lecture de la réponse de /iNeedAHint : %v\n\n", err)
 			}
 		}
 		// Préparer le corps JSON pour la requête POST vers /enterChallenge avec User et Secret
@@ -132,9 +132,9 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			// Lire la réponse en tant que chaîne de caractères
 			enterChallengeResponse, err := ioutil.ReadAll(respEnterChallenge.Body)
 			if err == nil {
-				fmt.Printf("Réponse de /enterChallenge : %s\n", string(enterChallengeResponse))
+				fmt.Printf("Réponse de /enterChallenge : %s\n\n", string(enterChallengeResponse))
 			} else {
-				fmt.Printf("Erreur lors de la lecture de la réponse de /enterChallenge : %v\n", err)
+				fmt.Printf("Erreur lors de la lecture de la réponse de /enterChallenge : %v\n\n", err)
 			}
 		}
 
@@ -146,11 +146,11 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 				"Level": "%s",
 				"Challenge": {
 					"Username": "9e13a5b2caa9235089f8de93bdc66c9d",
-					"Secret": "b72ade7805bca91f9ac1b1cd6e859eb0",
+					"Secret": "f9cc272f9a8ebf4e2656c8510c2d397d",
 					"Points": "%s"
 				},
-				"Protocol": "724490",
-				"SecretKey": "81495653505153"
+				"Protocol": "MD5",
+				"SecretKey": ""
 			}
 		}`, userLevelss, userPointss)
 
