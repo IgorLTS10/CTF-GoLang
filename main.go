@@ -13,6 +13,10 @@ type CheckResponse struct {
 	User string `json:"User"`
 }
 
+type UserSecretResponse struct {
+	Secret string `json:"Secret"`
+}
+
 func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	address := fmt.Sprintf("%s:%d", serverIP, port)
@@ -54,8 +58,45 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 				fmt.Printf("Erreur lors de la lecture de la réponse de /check : %v\n", err)
 			}
 		}
-	} else {
-		fmt.Printf("Port %d inaccessible\n", port)
+
+		// Préparer le corps JSON pour la requête POST vers /getUserSecret
+		userRequestBody := []byte(`{"User": "Igor"}`) // Remplacez "votre_prénom" par votre prénom réel
+
+		// Faire une requête HTTP POST pour /getUserSecret avec le corps JSON
+		userSecretURL := fmt.Sprintf("http://%s:%d/getUserSecret", serverIP, port)
+		respUserSecret, err := http.Post(userSecretURL, "application/json", bytes.NewBuffer(userRequestBody))
+		if err == nil {
+			defer respUserSecret.Body.Close()
+			fmt.Printf("Port %d accessible - POST Response for /getUserSecret: %s\n", port, respUserSecret.Status)
+
+			// Lire la réponse en tant que chaîne de caractères
+			userSecret, err := ioutil.ReadAll(respUserSecret.Body)
+			if err == nil {
+				fmt.Printf("Secret de l'utilisateur : %s\n", string(userSecret))
+			} else {
+				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserSecret : %v\n", err)
+			}
+		}
+
+		// Préparer le corps JSON pour la requête POST vers /getUserLevel
+		userLevelRequestBody := []byte(`{"User": "Igor", "Secret": "` + string(userRequestBody) + `"}`)
+
+		// Faire une requête HTTP POST pour /getUserLevel avec le corps JSON
+		userLevelURL := fmt.Sprintf("http://%s:%d/getUserLevel", serverIP, port)
+		respUserLevel, err := http.Post(userLevelURL, "application/json", bytes.NewBuffer(userLevelRequestBody))
+		if err == nil {
+			defer respUserLevel.Body.Close()
+			fmt.Printf("Port %d accessible - POST Response for /getUserLevel: %s\n", port, respUserLevel.Status)
+
+			// Lire la réponse en tant que chaîne de caractères
+			userLevel, err := ioutil.ReadAll(respUserLevel.Body)
+			if err == nil {
+				fmt.Printf("Niveau de l'utilisateur : %s\n", string(userLevel))
+			} else {
+				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserLevel : %v\n", err)
+			}
+		}
+
 	}
 }
 
