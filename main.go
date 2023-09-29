@@ -78,8 +78,8 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			}
 		}
 
-		// Préparer le corps JSON pour la requête POST vers /getUserLevel
-		userLevelRequestBody := []byte(`{"User": "Igor", "Secret": "` + string(userRequestBody) + `"}`)
+		// Préparer le corps JSON pour la requête POST vers /getUserLevel avec le secret en dur
+		userLevelRequestBody := []byte(`{"User": "Igor", "Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b"}`)
 
 		// Faire une requête HTTP POST pour /getUserLevel avec le corps JSON
 		userLevelURL := fmt.Sprintf("http://%s:%d/getUserLevel", serverIP, port)
