@@ -3,10 +3,15 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"sync"
 )
+
+type CheckResponse struct {
+	User string `json:"User"`
+}
 
 func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 	defer wg.Done()
@@ -33,6 +38,24 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			defer respSignup.Body.Close()
 			fmt.Printf("Port %d accessible - POST Response for /signup: %s\n", port, respSignup.Status)
 		}
+
+		// Faire une requête HTTP POST pour /check avec le même corps JSON
+		checkURL := fmt.Sprintf("http://%s:%d/check", serverIP, port)
+		respCheck, err := http.Post(checkURL, "application/json", bytes.NewBuffer(body))
+		if err == nil {
+			defer respCheck.Body.Close()
+			fmt.Printf("Port %d accessible - POST Response for /check: %s\n", port, respCheck.Status)
+
+			// Lire le contenu de la réponse de /check
+			responseBody, err := ioutil.ReadAll(respCheck.Body)
+			if err == nil {
+				fmt.Printf("Contenu de la réponse de /check : %s\n", string(responseBody))
+			} else {
+				fmt.Printf("Erreur lors de la lecture de la réponse de /check : %v\n", err)
+			}
+		}
+	} else {
+		fmt.Printf("Port %d inaccessible\n", port)
 	}
 }
 
