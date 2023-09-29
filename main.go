@@ -82,7 +82,6 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			} else {
 				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserLevel : %v\n", err)
 			}
-
 		}
 
 		userPointsRequestBody := []byte(`{"User": "Igor", "Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b"}`)
@@ -134,6 +133,41 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 				fmt.Printf("Erreur lors de la lecture de la réponse de /enterChallenge : %v\n", err)
 			}
 		}
+		// ...
+
+		// Préparer le corps JSON pour la requête POST vers /submitSolution avec User, Secret, Level et Points
+		submitSolutionRequestBody := fmt.Sprintf(`{
+	"User": "Igor",
+	"Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b",
+	"Content": {
+		"Level": "2167",
+		"Challenge": {
+			"Username": "nom_du_challenge",
+			"Secret": "secret_du_challenge",
+			"Points": "100"
+		},
+		"Protocol": "votre_protocol",
+		"SecretKey": "votre_secret_key"
+	}
+}`)
+
+		// Faire une requête HTTP POST vers /submitSolution
+		submitSolutionURL := fmt.Sprintf("http://%s:%d/submitSolution", serverIP, port)
+		respSubmitSolution, err := http.Post(submitSolutionURL, "application/json", bytes.NewBufferString(submitSolutionRequestBody))
+		if err == nil {
+			defer respSubmitSolution.Body.Close()
+			fmt.Printf("Port %d accessible - POST Response for /submitSolution: %s\n", port, respSubmitSolution.Status)
+
+			// Lire la réponse en tant que chaîne de caractères
+			submitSolutionResponse, err := ioutil.ReadAll(respSubmitSolution.Body)
+			if err == nil {
+				fmt.Printf("Réponse de /submitSolution : %s\n", string(submitSolutionResponse))
+			} else {
+				fmt.Printf("Erreur lors de la lecture de la réponse de /submitSolution : %v\n", err)
+			}
+		}
+
+		// ...
 
 	}
 
