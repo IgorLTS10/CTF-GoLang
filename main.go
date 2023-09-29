@@ -143,14 +143,14 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			"User": "Igor",
 			"Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b",
 			"Content": {
-				"Level": "%s",
+				"Level": %s,
 				"Challenge": {
-					"Username": "9e13a5b2caa9235089f8de93bdc66c9d",
-					"Secret": "f9cc272f9a8ebf4e2656c8510c2d397d",
-					"Points": "%s"
+					"Username": "Igor",
+					"Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b",
+					"Points": %s
 				},
 				"Protocol": "MD5",
-				"SecretKey": ""
+				"SecretKey": "Pasting code from the Internet into production code is like chewing gum found in the street.""
 			}
 		}`, userLevelss, userPointss)
 
