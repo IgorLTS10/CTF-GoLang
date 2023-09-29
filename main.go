@@ -19,6 +19,8 @@ type UserSecretResponse struct {
 
 func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 	defer wg.Done()
+	var userLevelss string
+	var userPointss string
 	address := fmt.Sprintf("%s:%d", serverIP, port)
 
 	conn, err := net.Dial("tcp", address)
@@ -78,6 +80,7 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			fmt.Printf("Port %d accessible - POST Response for /getUserLevel: %s\n", port, respUserLevel.Status)
 			userLevel, err := ioutil.ReadAll(respUserLevel.Body)
 			if err == nil {
+				userLevelss = string(userLevel)
 				fmt.Printf("Niveau de l'utilisateur : %s\n", string(userLevel))
 			} else {
 				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserLevel : %v\n", err)
@@ -92,6 +95,7 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			fmt.Printf("Port %d accessible - POST Response for /getUserPoints: %s\n", port, respUserPoints.Status)
 			userPoints, err := ioutil.ReadAll(respUserPoints.Body)
 			if err == nil {
+				userPointss = string(userPoints)
 				fmt.Printf("Points de l'utilisateur : %s\n", string(userPoints))
 			} else {
 				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserPoints : %v\n", err)
@@ -133,23 +137,22 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 				fmt.Printf("Erreur lors de la lecture de la réponse de /enterChallenge : %v\n", err)
 			}
 		}
-		// ...
 
-		// Préparer le corps JSON pour la requête POST vers /submitSolution avec User, Secret, Level et Points
+		// Préparation Requête /submitSolution
 		submitSolutionRequestBody := fmt.Sprintf(`{
-	"User": "Igor",
-	"Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b",
-	"Content": {
-		"Level": "2167",
-		"Challenge": {
-			"Username": "nom_du_challenge",
-			"Secret": "secret_du_challenge",
-			"Points": "100"
-		},
-		"Protocol": "votre_protocol",
-		"SecretKey": "votre_secret_key"
-	}
-}`)
+			"User": "Igor",
+			"Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b",
+			"Content": {
+				"Level": %s,
+				"Challenge": {
+					"Username": "9e13a5b2caa9235089f8de93bdc66c9d",
+					"Secret": "5bc2fb8cff6b14d9c62ea6447da62a4c",
+					"Points": %s
+				},
+				"Protocol": "724490",
+				"SecretKey": "10010100001111010101111011110100101100010000001"
+			}
+		}`, userLevelss, userPointss)
 
 		// Faire une requête HTTP POST vers /submitSolution
 		submitSolutionURL := fmt.Sprintf("http://%s:%d/submitSolution", serverIP, port)
@@ -166,9 +169,6 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 				fmt.Printf("Erreur lors de la lecture de la réponse de /submitSolution : %v\n", err)
 			}
 		}
-
-		// ...
-
 	}
 
 }
