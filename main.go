@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net"
 	"net/http"
@@ -24,12 +25,13 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			fmt.Printf("Port %d accessible - GET Response for /ping: %s\n", port, respPing.Status)
 		}
 
-		// Faire une requête HTTP GET pour /pong
-		pongURL := fmt.Sprintf("http://%s:%d/pong", serverIP, port)
-		respPong, err := http.Get(pongURL)
+		// Faire une requête HTTP POST pour /signup avec le prénom
+		signupURL := fmt.Sprintf("http://%s:%d/signup", serverIP, port)
+		body := []byte(`{"User": "Igor"}`)
+		respSignup, err := http.Post(signupURL, "application/json", bytes.NewBuffer(body))
 		if err == nil {
-			defer respPong.Body.Close()
-			fmt.Printf("Port %d accessible - GET Response for /pong: %s\n", port, respPong.Status)
+			defer respSignup.Body.Close()
+			fmt.Printf("Port %d accessible - POST Response for /signup: %s\n", port, respSignup.Status)
 		}
 	}
 }
