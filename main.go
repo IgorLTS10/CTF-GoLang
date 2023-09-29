@@ -98,7 +98,26 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			}
 		}
 
+		// Préparer le corps JSON pour la requête POST vers /iNeedAHint avec User et Secret
+		hintRequestBody := []byte(`{"User": "Igor", "Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b"}`)
+		// Faire une requête HTTP POST vers /iNeedAHint
+		hintURL := fmt.Sprintf("http://%s:%d/iNeedAHint", serverIP, port)
+		respHint, err := http.Post(hintURL, "application/json", bytes.NewBuffer(hintRequestBody))
+		if err == nil {
+			defer respHint.Body.Close()
+			fmt.Printf("Port %d accessible - POST Response for /iNeedAHint: %s\n", port, respHint.Status)
+
+			// Lire la réponse en tant que chaîne de caractères
+			hint, err := ioutil.ReadAll(respHint.Body)
+			if err == nil {
+				fmt.Printf("Hint : %s\n", string(hint))
+			} else {
+				fmt.Printf("Erreur lors de la lecture de la réponse de /iNeedAHint : %v\n", err)
+			}
+		}
+
 	}
+
 }
 
 func main() {
