@@ -82,6 +82,7 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			} else {
 				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserLevel : %v\n", err)
 			}
+
 		}
 
 		userPointsRequestBody := []byte(`{"User": "Igor", "Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b"}`)
@@ -115,6 +116,24 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 				fmt.Printf("Erreur lors de la lecture de la réponse de /iNeedAHint : %v\n", err)
 			}
 		}
+		// Préparer le corps JSON pour la requête POST vers /enterChallenge avec User et Secret
+		enterChallengeRequestBody := []byte(`{"User": "Igor", "Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b"}`)
+
+		// Faire une requête HTTP POST vers /enterChallenge
+		enterChallengeURL := fmt.Sprintf("http://%s:%d/enterChallenge", serverIP, port)
+		respEnterChallenge, err := http.Post(enterChallengeURL, "application/json", bytes.NewBuffer(enterChallengeRequestBody))
+		if err == nil {
+			defer respEnterChallenge.Body.Close()
+			fmt.Printf("Port %d accessible - POST Response for /enterChallenge: %s\n", port, respEnterChallenge.Status)
+
+			// Lire la réponse en tant que chaîne de caractères
+			enterChallengeResponse, err := ioutil.ReadAll(respEnterChallenge.Body)
+			if err == nil {
+				fmt.Printf("Réponse de /enterChallenge : %s\n", string(enterChallengeResponse))
+			} else {
+				fmt.Printf("Erreur lors de la lecture de la réponse de /enterChallenge : %v\n", err)
+			}
+		}
 
 	}
 
@@ -122,8 +141,8 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 
 func main() {
 	serverIP := "10.49.122.144"
-	minPort := 1
-	maxPort := 10000
+	minPort := 1024
+	maxPort := 8192
 
 	var wg sync.WaitGroup
 
