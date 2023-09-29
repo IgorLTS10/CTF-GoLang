@@ -143,14 +143,14 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			"User": "Igor",
 			"Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b",
 			"Content": {
-				"Level": %s,
+				"Level": "%s",
 				"Challenge": {
 					"Username": "9e13a5b2caa9235089f8de93bdc66c9d",
-					"Secret": "5bc2fb8cff6b14d9c62ea6447da62a4c",
-					"Points": %s
+					"Secret": "b72ade7805bca91f9ac1b1cd6e859eb0",
+					"Points": "%s"
 				},
 				"Protocol": "724490",
-				"SecretKey": "10010100001111010101111011110100101100010000001"
+				"SecretKey": "81495653505153"
 			}
 		}`, userLevelss, userPointss)
 
@@ -161,7 +161,6 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			defer respSubmitSolution.Body.Close()
 			fmt.Printf("Port %d accessible - POST Response for /submitSolution: %s\n", port, respSubmitSolution.Status)
 
-			// Lire la réponse en tant que chaîne de caractères
 			submitSolutionResponse, err := ioutil.ReadAll(respSubmitSolution.Body)
 			if err == nil {
 				fmt.Printf("Réponse de /submitSolution : %s\n", string(submitSolutionResponse))
