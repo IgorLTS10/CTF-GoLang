@@ -97,6 +97,25 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			}
 		}
 
+		// Préparer le corps JSON pour la requête POST vers /getUserPoints avec le secret en dur
+		userPointsRequestBody := []byte(`{"User": "Igor", "Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b"}`)
+
+		// Faire une requête HTTP POST pour /getUserPoints avec le corps JSON
+		userPointsURL := fmt.Sprintf("http://%s:%d/getUserPoints", serverIP, port)
+		respUserPoints, err := http.Post(userPointsURL, "application/json", bytes.NewBuffer(userPointsRequestBody))
+		if err == nil {
+			defer respUserPoints.Body.Close()
+			fmt.Printf("Port %d accessible - POST Response for /getUserPoints: %s\n", port, respUserPoints.Status)
+
+			// Lire la réponse en tant que chaîne de caractères
+			userPoints, err := ioutil.ReadAll(respUserPoints.Body)
+			if err == nil {
+				fmt.Printf("Points de l'utilisateur : %s\n", string(userPoints))
+			} else {
+				fmt.Printf("Erreur lors de la lecture de la réponse de /getUserPoints : %v\n", err)
+			}
+		}
+
 	}
 }
 
