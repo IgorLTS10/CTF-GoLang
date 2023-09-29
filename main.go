@@ -21,12 +21,10 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	address := fmt.Sprintf("%s:%d", serverIP, port)
 
-	// Tentative de connexion au serveur
 	conn, err := net.Dial("tcp", address)
 	if err == nil {
 		conn.Close()
 
-		// Faire une requête HTTP GET pour /ping
 		pingURL := fmt.Sprintf("http://%s:%d/ping", serverIP, port)
 		respPing, err := http.Get(pingURL)
 		if err == nil {
@@ -34,7 +32,6 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			fmt.Printf("Port %d accessible - GET Response for /ping: %s\n", port, respPing.Status)
 		}
 
-		// Faire une requête HTTP POST pour /signup avec le prénom
 		signupURL := fmt.Sprintf("http://%s:%d/signup", serverIP, port)
 		body := []byte(`{"User": "Igor"}`)
 		respSignup, err := http.Post(signupURL, "application/json", bytes.NewBuffer(body))
@@ -43,14 +40,12 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			fmt.Printf("Port %d accessible - POST Response for /signup: %s\n", port, respSignup.Status)
 		}
 
-		// Faire une requête HTTP POST pour /check avec le même corps JSON
 		checkURL := fmt.Sprintf("http://%s:%d/check", serverIP, port)
 		respCheck, err := http.Post(checkURL, "application/json", bytes.NewBuffer(body))
 		if err == nil {
 			defer respCheck.Body.Close()
 			fmt.Printf("Port %d accessible - POST Response for /check: %s\n", port, respCheck.Status)
 
-			// Lire le contenu de la réponse de /check
 			responseBody, err := ioutil.ReadAll(respCheck.Body)
 			if err == nil {
 				fmt.Printf("Contenu de la réponse de /check : %s\n", string(responseBody))
@@ -59,17 +54,13 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			}
 		}
 
-		// Préparer le corps JSON pour la requête POST vers /getUserSecret
-		userRequestBody := []byte(`{"User": "Igor"}`) // Remplacez "votre_prénom" par votre prénom réel
-
-		// Faire une requête HTTP POST pour /getUserSecret avec le corps JSON
+		userRequestBody := []byte(`{"User": "Igor"}`)
 		userSecretURL := fmt.Sprintf("http://%s:%d/getUserSecret", serverIP, port)
 		respUserSecret, err := http.Post(userSecretURL, "application/json", bytes.NewBuffer(userRequestBody))
 		if err == nil {
 			defer respUserSecret.Body.Close()
 			fmt.Printf("Port %d accessible - POST Response for /getUserSecret: %s\n", port, respUserSecret.Status)
 
-			// Lire la réponse en tant que chaîne de caractères
 			userSecret, err := ioutil.ReadAll(respUserSecret.Body)
 			if err == nil {
 				fmt.Printf("Secret de l'utilisateur : %s\n", string(userSecret))
@@ -78,17 +69,13 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			}
 		}
 
-		// Préparer le corps JSON pour la requête POST vers /getUserLevel avec le secret en dur
 		userLevelRequestBody := []byte(`{"User": "Igor", "Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b"}`)
 
-		// Faire une requête HTTP POST pour /getUserLevel avec le corps JSON
 		userLevelURL := fmt.Sprintf("http://%s:%d/getUserLevel", serverIP, port)
 		respUserLevel, err := http.Post(userLevelURL, "application/json", bytes.NewBuffer(userLevelRequestBody))
 		if err == nil {
 			defer respUserLevel.Body.Close()
 			fmt.Printf("Port %d accessible - POST Response for /getUserLevel: %s\n", port, respUserLevel.Status)
-
-			// Lire la réponse en tant que chaîne de caractères
 			userLevel, err := ioutil.ReadAll(respUserLevel.Body)
 			if err == nil {
 				fmt.Printf("Niveau de l'utilisateur : %s\n", string(userLevel))
@@ -97,17 +84,12 @@ func testPort(serverIP string, port int, wg *sync.WaitGroup) {
 			}
 		}
 
-		// Préparer le corps JSON pour la requête POST vers /getUserPoints avec le secret en dur
 		userPointsRequestBody := []byte(`{"User": "Igor", "Secret": "773079ad807a9694223d69ea5c9a05b0e98a74044a0e5d72ad0fcfcd0b72f20b"}`)
-
-		// Faire une requête HTTP POST pour /getUserPoints avec le corps JSON
 		userPointsURL := fmt.Sprintf("http://%s:%d/getUserPoints", serverIP, port)
 		respUserPoints, err := http.Post(userPointsURL, "application/json", bytes.NewBuffer(userPointsRequestBody))
 		if err == nil {
 			defer respUserPoints.Body.Close()
 			fmt.Printf("Port %d accessible - POST Response for /getUserPoints: %s\n", port, respUserPoints.Status)
-
-			// Lire la réponse en tant que chaîne de caractères
 			userPoints, err := ioutil.ReadAll(respUserPoints.Body)
 			if err == nil {
 				fmt.Printf("Points de l'utilisateur : %s\n", string(userPoints))
@@ -130,7 +112,5 @@ func main() {
 		wg.Add(1)
 		go testPort(serverIP, port, &wg)
 	}
-
-	// Attendre que toutes les goroutines se terminent
 	wg.Wait()
 }
